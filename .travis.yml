@@ -1,4 +1,11 @@
 language: node_js
 
 node_js:
-  - "8"
+- "8"
+
+install: exit 0
+
+script: exit 0
+
+notifications:
+  email: false
