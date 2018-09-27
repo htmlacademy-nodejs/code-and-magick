@@ -1,0 +1,24 @@
+{
+  "name": "code-and-magick",
+  "version": "0.0.1",
+  "description": "It's a project about code and magick",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/htmlacademy-nodejs/code-and-magick.git"
+  },
+  "author": "Evgenii Shchepotev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/htmlacademy-nodejs/code-and-magick/issues"
+  },
+  "homepage": "https://github.com/htmlacademy-nodejs/code-and-magick#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "5.6.0",
+    "eslint-config-htmlacademy": "0.5.2"
+  }
+}
