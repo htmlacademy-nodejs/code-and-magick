@@ -1,3 +1,5 @@
+'use strict';
+
 const args = process.argv.slice(2);
 
 switch (args[0]) {
