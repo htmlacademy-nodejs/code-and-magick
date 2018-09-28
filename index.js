@@ -1,17 +1,19 @@
-'use strict';
+#!/usr/bin/env node
+
+const commands = [
+  require(`./src/help`),
+  require(`./src/version`),
+  require(`./src/default`),
+];
 
 const args = process.argv.slice(2);
 
-switch (args[0]) {
-  case `--help`:
-    console.log(`This application does nothing. Accessible params:
---help    — prints this info;
---version — prints application version;`);
-    break;
-  case `--version`:
-    console.log(`v0.0.1`);
-    break;
-  default:
-    console.log(`This application doesn't anything helpful. Just prints some info and version.`);
-    console.error(`To list possible options use '--help'`);
+const param = args[0];
+
+if (!param) {
+  console.log(`No params were provided`);
+  process.exit(1);
 }
+
+const command = param;
+commands.find((it) => it.isApplicable(command)).execute(command);
