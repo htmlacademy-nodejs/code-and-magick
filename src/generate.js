@@ -13,13 +13,15 @@ module.exports = {
   isApplicable(command) {
     return command === COMMAND;
   },
-  execute(path = DEFAULT_PATH, callback) {
-    fs.writeFile(path, JSON.stringify(data), fileWriteOptions, (err) => {
-      if (err) {
-        return callback(err);
-      }
+  execute(path = DEFAULT_PATH) {
+    return new Promise((success, fail) => {
+      fs.writeFile(path, JSON.stringify(data), fileWriteOptions, (err) => {
+        if (err) {
+          return fail(err);
+        }
 
-      return callback(null);
+        return success();
+      });
     });
   }
 };

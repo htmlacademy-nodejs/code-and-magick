@@ -2,44 +2,26 @@
 
 const assert = require(`assert`);
 const fs = require(`fs`);
+const {promisify} = require(`util`);
 const generateCommand = require(`../src/generate`);
 
-const checkAndDelete = (file, cb) => {
-  fs.access(file, (accessError) => {
-    if (accessError) {
-      return assert.fail(accessError.message);
-    }
-
-    return fs.unlink(file, (unlinkError) => {
-      if (unlinkError) {
-        return assert.fail(unlinkError.message);
-      }
-
-      return cb();
-    });
-  });
-};
+const access = promisify(fs.access);
+const unlink = promisify(fs.unlink);
 
 describe(`Generate JSON command`, function () {
-  it(`should fail on non existing folder`, function (done) {
+  it(`should fail on non existing folder`, function () {
     const tempFileName = `${__dirname}/folder/testfile.json`;
-    generateCommand.execute(tempFileName, (err) => {
-      if (!err) {
-        assert.fail(`Path ${tempFileName} should not be available`);
-      }
 
-      done();
-    });
+    return generateCommand.execute(tempFileName)
+      .then(() => assert.fail(`Path ${tempFileName} should not be available`))
+      .catch((e) => assert.ok(e));
   });
 
-  it(`should create new file`, function (done) {
+  it(`should create new file`, function () {
     const tempFileName = `${__dirname}/testfile.json`;
-    generateCommand.execute(tempFileName, (err) => {
-      if (err) {
-        return assert.fail(err.message);
-      }
 
-      return checkAndDelete(tempFileName, done);
-    });
+    return generateCommand.execute(tempFileName)
+      .then(access(tempFileName))
+      .then(unlink(tempFileName));
   });
 });
