@@ -4,6 +4,7 @@
 const commands = [
   require(`./src/help`),
   require(`./src/version`),
+  require(`./src/generate`),
   require(`./src/default`),
 ];
 
@@ -17,4 +18,9 @@ if (!param) {
 }
 
 const command = param;
-commands.find((it) => it.isApplicable(command)).execute(command);
+commands.find((it) => it.isApplicable(command))
+  .execute()
+  .catch((err) => {
+    console.error(err.message);
+    process.exit(1);
+  });
