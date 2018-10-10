@@ -1,3 +1,5 @@
+'use strict';
+
 const http = require(`http`);
 const url = require(`url`);
 const fs = require(`fs`);
@@ -41,7 +43,7 @@ const readDir = async (path, relativePath, res) => {
 const server = http.createServer((req, res) => {
 
   const localPath = url.parse(req.url).pathname;
-  const absolutePath = __dirname + '/static/' + localPath;
+  const absolutePath = `${__dirname}/static/${localPath}`;
 
   (async () => {
     try {
