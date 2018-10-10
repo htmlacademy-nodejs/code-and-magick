@@ -3,6 +3,9 @@ const url = require(`url`);
 const fs = require(`fs`);
 const {promisify} = require(`util`);
 
+const HOSTNAME = `127.0.0.1`;
+const PORT = 3000;
+
 const stat = promisify(fs.stat);
 const readdir = promisify(fs.readdir);
 const readfile = promisify(fs.readFile);
@@ -35,10 +38,6 @@ const readDir = async (path, relativePath, res) => {
   res.end(printDirectory(path, relativePath, files));
 };
 
-
-const hostname = `127.0.0.1`;
-const port = 3000;
-
 const server = http.createServer((req, res) => {
 
   const localPath = url.parse(req.url).pathname;
@@ -69,7 +68,10 @@ const server = http.createServer((req, res) => {
   });
 });
 
-const serverAddress = `http://${hostname}:${port}`;
-server.listen(port, hostname, () => {
-  console.log(`Server running at ${serverAddress}/`);
+server.listen(PORT, HOSTNAME, (err) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log(`Server running at http://${HOSTNAME}:${PORT}`);
 });
