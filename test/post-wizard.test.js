@@ -41,6 +41,23 @@ describe(`POST /api/wizards`, () => {
     const wizard = response.body;
     assert.deepEqual(wizard, {name: wizardName});
   });
+  it(`send wizard with avatar as multipart/form-data`, async () => {
+
+    const wizardName = `SuperWizard`;
+
+    const response = await request(app).
+      post(`/api/wizards`).
+      field(`name`, wizardName).
+      attach(`avatar`, `test/fixtures/keks.png`).
+      set(`Accept`, `application/json`).
+      set(`Content-Type`, `multipart/form-data`).
+      expect(200).
+      expect(`Content-Type`, /json/);
+
+
+    const wizard = response.body;
+    assert.deepEqual(wizard, {name: wizardName});
+  });
 
 });
 
