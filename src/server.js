@@ -27,7 +27,10 @@ module.exports = {
   },
   execute(port = 3000) {
     runServer(port);
-  }
+  },
+  app
 };
 
-runServer(3000);
+if (require.main === module) {
+  runServer(3000);
+}
