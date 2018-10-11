@@ -36,7 +36,8 @@ app.get(`/api/wizards/:name`, (req, res) => {
     throw new IllegalArgumentError(`В запросе не указано имя`);
   }
 
-  const found = wizards.find((it) => it.name === wizardName);
+  const name = wizardName.toLowerCase();
+  const found = wizards.find((it) => it.name.toLowerCase() === name);
   if (!found) {
     throw new NotFoundError(`Маг с именем "${wizardName}" не найден`);
   }

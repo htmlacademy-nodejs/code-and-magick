@@ -18,6 +18,18 @@ describe(`GET /api/wizards`, () => {
     assert.equal(wizards.length, 17);
   });
 
+  it(`get all wizards with / at the end`, async () => {
+
+    const response = await request(app).
+      get(`/api/wizards/`).
+      set(`Accept`, `application/json`).
+      expect(200).
+      expect(`Content-Type`, /json/);
+
+    const wizards = response.body;
+    assert.equal(wizards.length, 17);
+  });
+
   it(`get data from unknown resource`, async () => {
     return request(app).
       get(`/api/oneone`).
@@ -60,5 +72,4 @@ describe(`GET /api/wizards/:name`, () => {
       expect(`Маг с именем "шапокляк" не найден`).
       expect(`Content-Type`, /html/);
   });
-
 });
