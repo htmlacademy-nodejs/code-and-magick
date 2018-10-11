@@ -46,7 +46,7 @@ app.get(`/api/wizards/:name`, (req, res) => {
 
 app.use(NOT_FOUND_HANDLER);
 
-app.use((err, req, res, _next) => {
+app.use((err, req, res, next) => {
   if (err) {
     console.error(err);
     res.status(err.code || 500).send(err.message);

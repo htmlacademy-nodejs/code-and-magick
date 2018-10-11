@@ -1,3 +1,5 @@
+'use strict';
+
 const request = require(`supertest`);
 const assert = require(`assert`);
 
@@ -17,7 +19,7 @@ describe(`GET /api/wizards`, () => {
   });
 
   it(`get data from unknown resource`, async () => {
-    return await request(app).
+    return request(app).
       get(`/api/oneone`).
       set(`Accept`, `application/json`).
       expect(404).
@@ -30,7 +32,18 @@ describe(`GET /api/wizards`, () => {
 describe(`GET /api/wizards/:name`, () => {
   it(`get wizard with name "Мерлин"`, async () => {
     const response = await request(app).
-      get(`/api/wizards/Мерлин`).
+      get(`/api/wizards/${encodeURI(`Мерлин`)}`).
+      set(`Accept`, `application/json`).
+      expect(200).
+      expect(`Content-Type`, /json/);
+
+    const wizard = response.body;
+    assert.strictEqual(wizard.name, `Мерлин`);
+  });
+
+  it(`get wizard with name "Мерлин" in lower case`, async () => {
+    const response = await request(app).
+      get(`/api/wizards/${encodeURI(`мерлин`)}`).
       set(`Accept`, `application/json`).
       expect(200).
       expect(`Content-Type`, /json/);
@@ -40,11 +53,11 @@ describe(`GET /api/wizards/:name`, () => {
   });
 
   it(`get unknown wizard with name "Шаполкляк"`, async () => {
-    return await request(app).
-      get(`/api/wizards/шапокляк`).
+    return request(app).
+      get(`/api/wizards/${encodeURI(`шапокляк`)}`).
       set(`Accept`, `application/json`).
       expect(404).
-      expect(`Page was not found`).
+      expect(`Маг с именем "шапокляк" не найден`).
       expect(`Content-Type`, /html/);
   });
 
