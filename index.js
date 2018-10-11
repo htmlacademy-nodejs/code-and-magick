@@ -3,6 +3,7 @@
 
 const commands = [
   require(`./src/help`),
+  require(`./src/server`),
   require(`./src/version`),
   require(`./src/generate`),
   require(`./src/default`),
@@ -17,10 +18,14 @@ if (!param) {
   process.exit(1);
 }
 
+const commandParams = args.slice(1);
+
 const command = param;
-commands.find((it) => it.isApplicable(command))
-  .execute()
-  .catch((err) => {
+const promise = commands.find((it) => it.isApplicable(command)).execute(...commandParams);
+
+if (promise) {
+  promise.catch((err) => {
     console.error(err.message);
     process.exit(1);
   });
+}
