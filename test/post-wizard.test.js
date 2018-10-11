@@ -33,7 +33,7 @@ describe(`POST /api/wizards`, () => {
       post(`/api/wizards`).
       field(`name`, wizardName).
       set(`Accept`, `application/json`).
-      set(`Content-Type`, `application/json`).
+      set(`Content-Type`, `multipart/form-data`).
       expect(200).
       expect(`Content-Type`, /json/);
 

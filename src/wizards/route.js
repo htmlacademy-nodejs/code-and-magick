@@ -6,6 +6,10 @@ const wizardsRouter = express.Router();
 const wizardsGenerator = require(`../generator/wizards-generator`);
 const IllegalArgumentError = require(`../error/illegal-argument-error`);
 const NotFoundError = require(`../error/not-found-error`);
+const multer = require(`multer`);
+
+const upload = multer({storage: multer.memoryStorage()});
+
 
 const jsonParser = express.json();
 
@@ -31,7 +35,7 @@ wizardsRouter.get(`/:name`, (req, res) => {
   res.send(found);
 });
 
-wizardsRouter.post(``, jsonParser, (req, res) => {
+wizardsRouter.post(``, jsonParser, upload.none(), (req, res) => {
   const body = req.body;
   res.send(body);
 });
