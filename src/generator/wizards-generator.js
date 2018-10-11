@@ -83,10 +83,11 @@ const names = namesGenerator([
   `Ведьма Пустоши`
 ]);
 
+const generatedNames = [...names];
 
 const getRandomFromArr = (arr) => arr[Math.floor(arr.length * Math.random())];
 
-const generateEntity = () => [...names].map((name) => ({
+const generateEntity = () => generatedNames.map((name) => ({
   'name': name,
   'colorCoat': getRandomFromArr(Color.COAT),
   'colorEyes': getRandomFromArr(Color.EYES),
