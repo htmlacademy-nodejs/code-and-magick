@@ -4,6 +4,10 @@ const express = require(`express`);
 const wizardsGenerator = require(`./generator/wizards-generator`);
 const app = express();
 
+const NOT_FOUND_HANDLER = (req, res) => {
+  res.status(404).send(`Page was not found`);
+};
+
 app.use(express.static(`${__dirname}/../static`));
 
 const wizards = wizardsGenerator.generateEntity();
@@ -11,6 +15,8 @@ const wizards = wizardsGenerator.generateEntity();
 app.get(`/api/wizards`, (req, res) => {
   res.send(wizards);
 });
+
+app.use(NOT_FOUND_HANDLER);
 
 const runServer = (port) => {
 

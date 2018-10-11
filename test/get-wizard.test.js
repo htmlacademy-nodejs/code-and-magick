@@ -17,10 +17,11 @@ describe(`GET /api/wizards`, () => {
   });
 
   it(`get data from unknown resource`, async () => {
-    return request(app).
+    return await request(app).
       get(`/api/oneone`).
       set(`Accept`, `application/json`).
       expect(404).
+      expect(`Page was not found`).
       expect(`Content-Type`, /html/);
   });
 
