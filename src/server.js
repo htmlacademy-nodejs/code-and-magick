@@ -16,7 +16,42 @@ app.get(`/api/wizards`, (req, res) => {
   res.send(wizards);
 });
 
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.code = 404;
+  }
+}
+
+class IllegalArgumentError extends Error {
+  constructor(message) {
+    super(message);
+    this.code = 400;
+  }
+}
+
+app.get(`/api/wizards/:name`, (req, res) => {
+  const wizardName = req.params.name;
+  if (!wizardName) {
+    throw new IllegalArgumentError(`В запросе не указано имя`);
+  }
+
+  const found = wizards.find((it) => it.name === wizardName);
+  if (!found) {
+    throw new NotFoundError(`Маг с именем "${wizardName}" не найден`);
+  }
+
+  res.send(found);
+});
+
 app.use(NOT_FOUND_HANDLER);
+
+app.use((err, req, res, _next) => {
+  if (err) {
+    console.error(err);
+    res.status(err.code || 500).send(err.message);
+  }
+});
 
 const runServer = (port) => {
 
