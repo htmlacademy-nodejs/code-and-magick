@@ -8,6 +8,9 @@ const IllegalArgumentError = require(`../error/illegal-argument-error`);
 const NotFoundError = require(`../error/not-found-error`);
 const multer = require(`multer`);
 
+const ValidationError = require(`../error/validation-error`);
+const validate = require(`./validate`);
+
 const upload = multer({storage: multer.memoryStorage()});
 
 
@@ -41,7 +44,14 @@ wizardsRouter.post(``, jsonParser, upload.single(`avatar`), (req, res) => {
   if (avatar) {
     body.avatar = {name: avatar.originalname};
   }
-  res.send(body);
+
+  res.send(validate(body));
+});
+
+wizardsRouter.use((err, req, res, _next) => {
+  if (err instanceof ValidationError) {
+    res.status(err.code).json(err.errors);
+  }
 });
 
 module.exports = wizardsRouter;

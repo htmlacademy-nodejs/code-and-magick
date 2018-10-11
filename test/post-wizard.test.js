@@ -24,6 +24,22 @@ describe(`POST /api/wizards`, () => {
     const wizard = response.body;
     assert.deepEqual(wizard, sent);
   });
+  it(`send wizard without name`, async () => {
+
+    const response = await request(app).
+      post(`/api/wizards`).
+      send({}).
+      set(`Accept`, `application/json`).
+      set(`Content-Type`, `application/json`).
+      expect(400).
+      expect(`Content-Type`, /json/);
+
+
+    const errors = response.body;
+    assert.deepEqual(errors, [
+      `Field name "name" is required!`
+    ]);
+  });
 
   it(`send wizard as multipart/form-data`, async () => {
 
