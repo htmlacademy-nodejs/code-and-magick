@@ -35,8 +35,12 @@ wizardsRouter.get(`/:name`, (req, res) => {
   res.send(found);
 });
 
-wizardsRouter.post(``, jsonParser, upload.none(), (req, res) => {
+wizardsRouter.post(``, jsonParser, upload.single(`avatar`), (req, res) => {
   const body = req.body;
+  const avatar = req.file;
+  if (avatar) {
+    body.avatar = {name: avatar.originalname};
+  }
   res.send(body);
 });
 

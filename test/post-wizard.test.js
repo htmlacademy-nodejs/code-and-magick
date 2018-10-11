@@ -56,7 +56,7 @@ describe(`POST /api/wizards`, () => {
 
 
     const wizard = response.body;
-    assert.deepEqual(wizard, {name: wizardName});
+    assert.deepEqual(wizard, {name: wizardName, avatar: {name: `keks.png`}});
   });
 
 });
