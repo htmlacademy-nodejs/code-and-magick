@@ -26,3 +26,26 @@ describe(`GET /api/wizards`, () => {
   });
 
 });
+
+describe(`GET /api/wizards/:name`, () => {
+  it(`get wizard with name "Мерлин"`, async () => {
+    const response = await request(app).
+      get(`/api/wizards/Мерлин`).
+      set(`Accept`, `application/json`).
+      expect(200).
+      expect(`Content-Type`, /json/);
+
+    const wizard = response.body;
+    assert.strictEqual(wizard.name, `Мерлин`);
+  });
+
+  it(`get unknown wizard with name "Шаполкляк"`, async () => {
+    return await request(app).
+      get(`/api/wizards/шапокляк`).
+      set(`Accept`, `application/json`).
+      expect(404).
+      expect(`Page was not found`).
+      expect(`Content-Type`, /html/);
+  });
+
+});
