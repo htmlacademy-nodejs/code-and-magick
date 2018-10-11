@@ -1,7 +1,7 @@
 'use strict';
 
-// eslint-disable-next-line new-cap
 const express = require(`express`);
+// eslint-disable-next-line new-cap
 const wizardsRouter = express.Router();
 const wizardsGenerator = require(`../generator/wizards-generator`);
 const IllegalArgumentError = require(`../error/illegal-argument-error`);
