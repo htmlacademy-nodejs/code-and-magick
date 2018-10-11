@@ -1,58 +1,26 @@
 'use strict';
 
 const express = require(`express`);
-const wizardsGenerator = require(`./generator/wizards-generator`);
+const wizardsRouter = require(`./wizards/route`);
 const app = express();
 
 const NOT_FOUND_HANDLER = (req, res) => {
   res.status(404).send(`Page was not found`);
 };
-
-app.use(express.static(`${__dirname}/../static`));
-
-const wizards = wizardsGenerator.generateEntity();
-
-app.get(`/api/wizards`, (req, res) => {
-  res.send(wizards);
-});
-
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.code = 404;
-  }
-}
-
-class IllegalArgumentError extends Error {
-  constructor(message) {
-    super(message);
-    this.code = 400;
-  }
-}
-
-app.get(`/api/wizards/:name`, (req, res) => {
-  const wizardName = req.params.name;
-  if (!wizardName) {
-    throw new IllegalArgumentError(`В запросе не указано имя`);
-  }
-
-  const name = wizardName.toLowerCase();
-  const found = wizards.find((it) => it.name.toLowerCase() === name);
-  if (!found) {
-    throw new NotFoundError(`Маг с именем "${wizardName}" не найден`);
-  }
-
-  res.send(found);
-});
-
-app.use(NOT_FOUND_HANDLER);
-
-app.use((err, req, res, next) => {
+const ERROR_HANDLER = (err, req, res, next) => {
   if (err) {
     console.error(err);
     res.status(err.code || 500).send(err.message);
   }
-});
+};
+
+app.use(express.static(`${__dirname}/../static`));
+
+app.use(`/api/wizards`, wizardsRouter);
+
+app.use(NOT_FOUND_HANDLER);
+
+app.use(ERROR_HANDLER);
 
 const runServer = (port) => {
 
