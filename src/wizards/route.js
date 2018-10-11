@@ -1,11 +1,13 @@
 'use strict';
 
 // eslint-disable-next-line new-cap
-const wizardsRouter = require(`express`).Router();
+const express = require(`express`);
+const wizardsRouter = express.Router();
 const wizardsGenerator = require(`../generator/wizards-generator`);
 const IllegalArgumentError = require(`../error/illegal-argument-error`);
 const NotFoundError = require(`../error/not-found-error`);
 
+const jsonParser = express.json();
 
 const wizards = wizardsGenerator.generateEntity();
 
@@ -27,6 +29,11 @@ wizardsRouter.get(`/:name`, (req, res) => {
   }
 
   res.send(found);
+});
+
+wizardsRouter.post(``, jsonParser, (req, res) => {
+  const body = req.body;
+  res.send(body);
 });
 
 module.exports = wizardsRouter;
