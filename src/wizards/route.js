@@ -12,30 +12,35 @@ const multer = require(`multer`);
 const ValidationError = require(`../error/validation-error`);
 const validate = require(`./validate`);
 
+const wizardStore = require(`./store`);
+
 const upload = multer({storage: multer.memoryStorage()});
 const jsonParser = express.json();
 
+const PAGE_DEFAULT_LIMIT = 10;
+
 const wizards = wizardsGenerator.generateEntity();
 
-const PAGE_DEFAULT_LIMIT = 10;
-const toPage = (data, skip = 0, limit = PAGE_DEFAULT_LIMIT) => {
-  const packet = data.slice(skip, skip + limit);
+const asyncMiddleware = (fn) => (req, res, next) => fn(req, res, next).catch(next);
+
+const toPage = async (cursor, skip = 0, limit = PAGE_DEFAULT_LIMIT) => {
+  const packet = await cursor.skip(skip).limit(limit).toArray();
   return {
     data: packet,
     skip,
     limit,
-    total: data.length
+    total: await cursor.count()
   };
 };
 
-wizardsRouter.get(``, (req, res) => {
+wizardsRouter.get(``, asyncMiddleware(async (req, res) => {
   const skip = parseInt(req.query.skip || 0, 10);
   const limit = parseInt(req.query.limit || PAGE_DEFAULT_LIMIT, 10);
   if (isNaN(skip) || isNaN(limit)) {
     throw new IllegalArgumentError(`Неверное значение параметра "skip" или "limit"`);
   }
-  res.send(toPage(wizards, skip, limit));
-});
+  res.send(await toPage(await wizardStore.getAllWizards(), skip, limit));
+}));
 
 
 wizardsRouter.get(`/:name`, (req, res) => {
