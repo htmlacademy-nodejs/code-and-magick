@@ -9,7 +9,7 @@ class WizardStoreMock {
   }
 
   async getWizard(username) {
-    return this.data.filter((it) => it.name.toLowerCase() === username)[0];
+    return this.data.filter((it) => it.name.toLowerCase() === username.toLowerCase())[0];
   }
 
   async getAllWizards() {
