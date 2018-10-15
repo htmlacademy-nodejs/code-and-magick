@@ -77,7 +77,7 @@ describe(`GET /api/wizards/:name`, () => {
     assert.strictEqual(wizard.name, `Мерлин`);
   });
 
-  it(`get unknown wizard with name "Шаполкляк"`, async () => {
+  it(`get unknown wizard with name "Шапокляк"`, async () => {
     return request(app).
       get(`/api/wizards/${encodeURI(`шапокляк`)}`).
       set(`Accept`, `application/json`).
