@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require(`express`);
+
 // eslint-disable-next-line new-cap
 const wizardsRouter = express.Router();
 const wizardsGenerator = require(`../generator/wizards-generator`);
@@ -12,14 +13,28 @@ const ValidationError = require(`../error/validation-error`);
 const validate = require(`./validate`);
 
 const upload = multer({storage: multer.memoryStorage()});
-
-
 const jsonParser = express.json();
 
 const wizards = wizardsGenerator.generateEntity();
 
+const PAGE_DEFAULT_LIMIT = 10;
+const toPage = (data, skip = 0, limit = PAGE_DEFAULT_LIMIT) => {
+  const packet = data.slice(skip, skip + limit);
+  return {
+    data: packet,
+    skip,
+    limit,
+    total: data.length
+  };
+};
+
 wizardsRouter.get(``, (req, res) => {
-  res.send(wizards);
+  const skip = parseInt(req.query.skip || 0, 10);
+  const limit = parseInt(req.query.limit || PAGE_DEFAULT_LIMIT, 10);
+  if (isNaN(skip) || isNaN(limit)) {
+    throw new IllegalArgumentError(`Неверное значение параметра "skip" или "limit"`);
+  }
+  res.send(toPage(wizards, skip, limit));
 });
 
 
@@ -48,9 +63,11 @@ wizardsRouter.post(``, jsonParser, upload.single(`avatar`), (req, res) => {
   res.send(validate(body));
 });
 
-wizardsRouter.use((err, req, res, _next) => {
+wizardsRouter.use((err, req, res, next) => {
   if (err instanceof ValidationError) {
     res.status(err.code).json(err.errors);
+  } else {
+    next(err, req, res);
   }
 });
 
