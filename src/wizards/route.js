@@ -67,7 +67,9 @@ wizardsRouter.post(``, jsonParser, upload.single(`avatar`), asyncMiddleware(asyn
   const result = await wizardsRouter.wizardsStore.save(validated);
   const insertedId = result.insertedId;
 
-  await wizardsRouter.imageStore.save(insertedId, toStream(avatar.buffer));
+  if (avatar) {
+    await wizardsRouter.imageStore.save(insertedId, toStream(avatar.buffer));
+  }
 
   res.send(validated);
 }));

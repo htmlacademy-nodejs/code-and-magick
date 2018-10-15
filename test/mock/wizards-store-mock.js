@@ -17,6 +17,9 @@ class WizardStoreMock {
   }
 
   async save() {
+    return {
+      insertedId: 42
+    }
   }
 
 }
