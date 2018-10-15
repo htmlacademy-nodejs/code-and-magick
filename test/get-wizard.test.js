@@ -2,8 +2,13 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
+const express = require(`express`);
 
-const app = require(`../src/server`).app;
+const wizardsRoute = require(`../src/wizards/route`);
+
+const app = express();
+
+app.use(`/api/wizards`, wizardsRoute);
 
 describe(`GET /api/wizards`, () => {
   it(`get all wizards`, async () => {
