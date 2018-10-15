@@ -122,8 +122,8 @@ wizardsRouter.use(ERROR_HANDLER);
 wizardsRouter.use(NOT_FOUND_HANDLER);
 
 
-module.exports = (wizardsStore) => {
+module.exports = (wizardsStore, imagesStore) => {
   wizardsRouter.wizardsStore = wizardsStore;
-  wizardsRouter.imageStore = require(`../images/store`);
+  wizardsRouter.imageStore = imagesStore;
   return wizardsRouter;
 };

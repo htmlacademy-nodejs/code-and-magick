@@ -2,7 +2,8 @@
 
 const express = require(`express`);
 const wizardsStore = require(`./wizards/store`);
-const wizardsRouter = require(`./wizards/route`)(wizardsStore);
+const imagesStore = require(`./images/store`);
+const wizardsRouter = require(`./wizards/route`)(wizardsStore, imagesStore);
 const app = express();
 
 

@@ -5,7 +5,8 @@ const assert = require(`assert`);
 const express = require(`express`);
 
 const wizardsStoreMock = require(`./mock/wizards-store-mock`);
-const wizardsRoute = require(`../src/wizards/route`)(wizardsStoreMock);
+const imagesStoreMock = require(`./mock/images-store-mock`);
+const wizardsRoute = require(`../src/wizards/route`)(wizardsStoreMock, imagesStoreMock);
 
 const app = express();
 
