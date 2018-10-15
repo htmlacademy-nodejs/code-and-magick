@@ -6,7 +6,7 @@ const setupCollection = async () => {
   const dBase = await db;
 
   const collection = dBase.collection(`wizards`);
-  collection.createIndex({username: -1}, {unique: true});
+  collection.createIndex({name: -1}, {unique: true});
   return collection;
 };
 
@@ -15,8 +15,8 @@ class WizardStore {
     this.collection = collection;
   }
 
-  async getWizard(username) {
-    return (await this.collection).findOne({username});
+  async getWizard(name) {
+    return (await this.collection).findOne({name});
   }
 
   async getAllWizards() {

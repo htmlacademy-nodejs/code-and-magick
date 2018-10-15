@@ -7,9 +7,11 @@ const wizardsRouter = express.Router();
 const IllegalArgumentError = require(`../error/illegal-argument-error`);
 const NotFoundError = require(`../error/not-found-error`);
 const multer = require(`multer`);
+const MongoError = require(`mongodb`).MongoError;
 
 const ValidationError = require(`../error/validation-error`);
 const validate = require(`./validate`);
+const toStream = require(`buffer-to-stream`);
 
 const upload = multer({storage: multer.memoryStorage()});
 const jsonParser = express.json();
@@ -44,7 +46,7 @@ wizardsRouter.get(`/:name`, asyncMiddleware(async (req, res) => {
     throw new IllegalArgumentError(`В запросе не указано имя`);
   }
 
-  const name = wizardName.toLowerCase();
+  const name = wizardName;
   const found = await wizardsRouter.wizardsStore.getWizard(name);
   if (!found) {
     throw new NotFoundError(`Маг с именем "${wizardName}" не найден`);
@@ -53,36 +55,64 @@ wizardsRouter.get(`/:name`, asyncMiddleware(async (req, res) => {
   res.send(found);
 }));
 
-wizardsRouter.post(``, jsonParser, upload.single(`avatar`), (req, res) => {
+wizardsRouter.post(``, jsonParser, upload.single(`avatar`), asyncMiddleware(async (req, res) => {
   const body = req.body;
   const avatar = req.file;
   if (avatar) {
     body.avatar = {name: avatar.originalname};
   }
 
-  res.send(validate(body));
-});
+  const validated = validate(body);
+
+  const result = await wizardsRouter.wizardsStore.save(validated);
+  const insertedId = result.insertedId;
+
+  await wizardsRouter.imageStore.save(insertedId, toStream(avatar.buffer));
+
+  res.send(validated);
+}));
+
+wizardsRouter.get(`/:name/avatar`, asyncMiddleware(async (req, res) => {
+  const wizardName = req.params.name;
+  if (!wizardName) {
+    throw new IllegalArgumentError(`В запросе не указано имя`);
+  }
+
+  const name = wizardName;
+  const found = await wizardsRouter.wizardsStore.getWizard(name);
+
+  if (!found) {
+    throw new NotFoundError(`Маг с именем "${wizardName}" не найден`);
+  }
+
+  const result = await wizardsRouter.imageStore.get(found._id);
+  if (!result) {
+    throw new NotFoundError(`Аватар для пользователя "${wizardName}" не найден`);
+  }
+
+  res.header(`Content-Type`, `image/jpg`);
+  res.header(`Content-Length`, result.info.length);
+
+  res.on(`error`, (e) => console.error(e));
+  res.on(`end`, () => res.end());
+  res.pipe(result.stream);
+}));
 
 const NOT_FOUND_HANDLER = (req, res) => {
   res.status(404).send(`Page was not found`);
 };
 
 const ERROR_HANDLER = (err, req, res, next) => {
-  if (err) {
-    console.error(err);
-    res.status(err.code || 500).send(err.message);
-  } else {
-    next(err, req, res);
-  }
-};
-
-wizardsRouter.use((err, req, res, next) => {
+  console.error(err);
   if (err instanceof ValidationError) {
     res.status(err.code).json(err.errors);
-  } else {
-    next(err, req, res);
+    return;
+  } else if (err instanceof MongoError) {
+    res.status(400).json(err.message);
+    return;
   }
-});
+  res.status(err.code || 500).send(err.message);
+};
 
 wizardsRouter.use(ERROR_HANDLER);
 
@@ -91,5 +121,6 @@ wizardsRouter.use(NOT_FOUND_HANDLER);
 
 module.exports = (wizardsStore) => {
   wizardsRouter.wizardsStore = wizardsStore;
+  wizardsRouter.imageStore = require(`../images/store`);
   return wizardsRouter;
 };
