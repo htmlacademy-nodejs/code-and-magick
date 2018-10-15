@@ -4,7 +4,6 @@ const express = require(`express`);
 
 // eslint-disable-next-line new-cap
 const wizardsRouter = express.Router();
-const wizardsGenerator = require(`../generator/wizards-generator`);
 const IllegalArgumentError = require(`../error/illegal-argument-error`);
 const NotFoundError = require(`../error/not-found-error`);
 const multer = require(`multer`);
@@ -12,14 +11,10 @@ const multer = require(`multer`);
 const ValidationError = require(`../error/validation-error`);
 const validate = require(`./validate`);
 
-const wizardStore = require(`./store`);
-
 const upload = multer({storage: multer.memoryStorage()});
 const jsonParser = express.json();
 
 const PAGE_DEFAULT_LIMIT = 10;
-
-const wizards = wizardsGenerator.generateEntity();
 
 const asyncMiddleware = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
@@ -39,24 +34,24 @@ wizardsRouter.get(``, asyncMiddleware(async (req, res) => {
   if (isNaN(skip) || isNaN(limit)) {
     throw new IllegalArgumentError(`Неверное значение параметра "skip" или "limit"`);
   }
-  res.send(await toPage(await wizardStore.getAllWizards(), skip, limit));
+  res.send(await toPage(await wizardsRouter.wizardsStore.getAllWizards(), skip, limit));
 }));
 
 
-wizardsRouter.get(`/:name`, (req, res) => {
+wizardsRouter.get(`/:name`, asyncMiddleware(async (req, res) => {
   const wizardName = req.params.name;
   if (!wizardName) {
     throw new IllegalArgumentError(`В запросе не указано имя`);
   }
 
   const name = wizardName.toLowerCase();
-  const found = wizards.find((it) => it.name.toLowerCase() === name);
+  const found = await wizardsRouter.wizardsStore.getWizard(name);
   if (!found) {
     throw new NotFoundError(`Маг с именем "${wizardName}" не найден`);
   }
 
   res.send(found);
-});
+}));
 
 wizardsRouter.post(``, jsonParser, upload.single(`avatar`), (req, res) => {
   const body = req.body;
@@ -68,6 +63,19 @@ wizardsRouter.post(``, jsonParser, upload.single(`avatar`), (req, res) => {
   res.send(validate(body));
 });
 
+const NOT_FOUND_HANDLER = (req, res) => {
+  res.status(404).send(`Page was not found`);
+};
+
+const ERROR_HANDLER = (err, req, res, next) => {
+  if (err) {
+    console.error(err);
+    res.status(err.code || 500).send(err.message);
+  } else {
+    next(err, req, res);
+  }
+};
+
 wizardsRouter.use((err, req, res, next) => {
   if (err instanceof ValidationError) {
     res.status(err.code).json(err.errors);
@@ -76,4 +84,12 @@ wizardsRouter.use((err, req, res, next) => {
   }
 });
 
-module.exports = wizardsRouter;
+wizardsRouter.use(ERROR_HANDLER);
+
+wizardsRouter.use(NOT_FOUND_HANDLER);
+
+
+module.exports = (wizardsStore) => {
+  wizardsRouter.wizardsStore = wizardsStore;
+  return wizardsRouter;
+};

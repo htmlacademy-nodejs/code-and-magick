@@ -4,7 +4,8 @@ const request = require(`supertest`);
 const assert = require(`assert`);
 const express = require(`express`);
 
-const wizardsRoute = require(`../src/wizards/route`);
+const wizardsStoreMock = require(`./mock/wizards-store-mock`);
+const wizardsRoute = require(`../src/wizards/route`)(wizardsStoreMock);
 
 const app = express();
 
@@ -50,15 +51,6 @@ describe(`GET /api/wizards`, () => {
     assert.equal(wizards.data.length, 10);
   });
 
-  it(`get data from unknown resource`, async () => {
-    return await request(app).
-      get(`/api/oneone`).
-      set(`Accept`, `application/json`).
-      expect(404).
-      expect(`Page was not found`).
-      expect(`Content-Type`, /html/);
-  });
-
 });
 
 describe(`GET /api/wizards/:name`, () => {
@@ -84,7 +76,7 @@ describe(`GET /api/wizards/:name`, () => {
     assert.strictEqual(wizard.name, `Мерлин`);
   });
 
-  xit(`get unknown wizard with name "Шаполкляк"`, async () => {
+  it(`get unknown wizard with name "Шаполкляк"`, async () => {
     return request(app).
       get(`/api/wizards/${encodeURI(`шапокляк`)}`).
       set(`Accept`, `application/json`).
