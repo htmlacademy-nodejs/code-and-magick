@@ -15,7 +15,21 @@ describe(`GET /api/wizards`, () => {
       expect(`Content-Type`, /json/);
 
     const wizards = response.body;
-    assert.equal(wizards.length, 17);
+    assert.equal(wizards.total, 17);
+    assert.equal(wizards.data.length, 10);
+  });
+
+  it(`get all wizards?skip=2&limit=20`, async () => {
+
+    const response = await request(app).
+      get(`/api/wizards?skip=2&limit=20`).
+      set(`Accept`, `application/json`).
+      expect(200).
+      expect(`Content-Type`, /json/);
+
+    const wizards = response.body;
+    assert.equal(wizards.total, 17);
+    assert.equal(wizards.data.length, 15);
   });
 
   it(`get all wizards with / at the end`, async () => {
@@ -27,7 +41,8 @@ describe(`GET /api/wizards`, () => {
       expect(`Content-Type`, /json/);
 
     const wizards = response.body;
-    assert.equal(wizards.length, 17);
+    assert.equal(wizards.total, 17);
+    assert.equal(wizards.data.length, 10);
   });
 
   it(`get data from unknown resource`, async () => {
