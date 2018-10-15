@@ -95,7 +95,10 @@ wizardsRouter.get(`/:name/avatar`, asyncMiddleware(async (req, res) => {
 
   res.on(`error`, (e) => console.error(e));
   res.on(`end`, () => res.end());
-  res.pipe(result.stream);
+  const stream = result.stream;
+  stream.on(`error`, (e) => console.error(e));
+  stream.on(`end`, () => res.end());
+  stream.pipe(res);
 }));
 
 const NOT_FOUND_HANDLER = (req, res) => {
