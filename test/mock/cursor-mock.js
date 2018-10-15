@@ -1,3 +1,5 @@
+'use strict';
+
 class Cursor {
   constructor(data) {
     this.data = data;
@@ -11,7 +13,7 @@ class Cursor {
     return new Cursor(this.data.slice(0, count));
   }
 
-  async toArray(count = 0) {
+  async toArray() {
     return this.data;
   }
 

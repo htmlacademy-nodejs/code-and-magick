@@ -105,7 +105,7 @@ const NOT_FOUND_HANDLER = (req, res) => {
   res.status(404).send(`Page was not found`);
 };
 
-const ERROR_HANDLER = (err, req, res, next) => {
+const ERROR_HANDLER = (err, req, res, _next) => {
   console.error(err);
   if (err instanceof ValidationError) {
     res.status(err.code).json(err.errors);
