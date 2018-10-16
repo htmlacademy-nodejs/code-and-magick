@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require(`fs`);
-const {generateEntity} = require(`./generator/wizards-generator`);
+const {generateEntity} = require(`./wizards-generator`);
 
 const COMMAND = `--generate`;
 const DEFAULT_PATH = `${process.cwd()}/wizards.json`;

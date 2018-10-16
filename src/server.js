@@ -1,26 +1,15 @@
 'use strict';
 
 const express = require(`express`);
-const wizardsRouter = require(`./wizards/route`);
+const wizardsStore = require(`./wizards/store`);
+const imagesStore = require(`./images/store`);
+const wizardsRouter = require(`./wizards/route`)(wizardsStore, imagesStore);
 const app = express();
 
-const NOT_FOUND_HANDLER = (req, res) => {
-  res.status(404).send(`Page was not found`);
-};
-const ERROR_HANDLER = (err, req, res, _next) => {
-  if (err) {
-    console.error(err);
-    res.status(err.code || 500).send(err.message);
-  }
-};
 
 app.use(express.static(`${__dirname}/../static`));
 
 app.use(`/api/wizards`, wizardsRouter);
-
-app.use(NOT_FOUND_HANDLER);
-
-app.use(ERROR_HANDLER);
 
 const runServer = (port) => {
 
