@@ -63,7 +63,7 @@ describe(`GET /api/wizards/:name`, () => {
       expect(`Content-Type`, /json/);
 
     const wizard = response.body;
-    assert.strictEqual(wizard.name, `Мерлин`);
+    assert.strictEqual(wizard.username, `Мерлин`);
   });
 
   it(`get wizard with name "Мерлин" in lower case`, async () => {
@@ -74,7 +74,7 @@ describe(`GET /api/wizards/:name`, () => {
       expect(`Content-Type`, /json/);
 
     const wizard = response.body;
-    assert.strictEqual(wizard.name, `Мерлин`);
+    assert.strictEqual(wizard.username, `Мерлин`);
   });
 
   it(`get unknown wizard with name "Шапокляк"`, async () => {
