@@ -2,9 +2,14 @@
 
 const {MongoClient} = require(`mongodb`);
 
-const url = `mongodb://localhost:27017`;
+const {
+  DB_HOST = `localhost:27017`,
+  DB_PATH = `code-and-magick`
+} = process.env;
 
-module.exports = MongoClient.connect(url).then((client) => client.db(`code-and-magick`)).catch((e) => {
+const url = `mongodb://${DB_HOST}`;
+
+module.exports = MongoClient.connect(url).then((client) => client.db(DB_PATH)).catch((e) => {
   console.error(`Failed to connect to MongoDB`, e);
   process.exit(1);
 });
