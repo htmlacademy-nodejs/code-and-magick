@@ -88,7 +88,7 @@ const generatedNames = [...names];
 const getRandomFromArr = (arr) => arr[Math.floor(arr.length * Math.random())];
 
 const generateEntity = () => generatedNames.map((name) => ({
-  'name': name,
+  'username': name,
   'colorCoat': getRandomFromArr(Color.COAT),
   'colorEyes': getRandomFromArr(Color.EYES),
   'colorFireball': getRandomFromArr(Color.FIREBALL),
