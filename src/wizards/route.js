@@ -30,6 +30,14 @@ const toPage = async (cursor, skip = 0, limit = PAGE_DEFAULT_LIMIT) => {
   };
 };
 
+const ALLOW_CORS = (req, res, next) => {
+  res.header(`Access-Control-Allow-Origin`, `*`);
+  res.header(`Access-Control-Allow-Headers`, `Origin, X-Requested-With, Content-Type, Accept`);
+  next();
+};
+
+wizardsRouter.use(ALLOW_CORS);
+
 wizardsRouter.get(``, asyncMiddleware(async (req, res) => {
   const skip = parseInt(req.query.skip || 0, 10);
   const limit = parseInt(req.query.limit || PAGE_DEFAULT_LIMIT, 10);
