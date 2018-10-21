@@ -2,6 +2,7 @@
 
 require(`colors`);
 
+const logger = require(`./logger`);
 const packageInfo = require(`../package`);
 
 const versionParts = packageInfo.version.split(`.`);
@@ -12,6 +13,6 @@ module.exports = {
     return command === VERSION_COMMAND;
   },
   execute() {
-    console.log(`v${versionParts[0].red}.${versionParts[1].green}.${versionParts[2].blue}`);
+    logger.info(`v${versionParts[0].red}.${versionParts[1].green}.${versionParts[2].blue}`);
   }
 };

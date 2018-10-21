@@ -2,6 +2,7 @@
 
 require(`colors`);
 
+const logger = require(`./logger`);
 const packageInfo = require(`../package`);
 
 module.exports = {
@@ -9,8 +10,8 @@ module.exports = {
     return true;
   },
   execute() {
-    console.log(packageInfo.description.rainbow);
-    console.error(`To list possible options use '--help'`);
+    logger.info(packageInfo.description.rainbow);
+    logger.error(`To list possible options use '--help'`);
     process.exit(1);
   }
 };

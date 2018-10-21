@@ -11,6 +11,7 @@ const MongoError = require(`mongodb`).MongoError;
 const ValidationError = require(`../error/validation-error`);
 const validate = require(`./validate`);
 const toStream = require(`buffer-to-stream`);
+const logger = require(`../logger`);
 
 const upload = multer({storage: multer.memoryStorage()});
 const jsonParser = express.json();
@@ -94,10 +95,10 @@ wizardsRouter.get(`/:name/avatar`, asyncMiddleware(async (req, res) => {
   res.header(`Content-Type`, `image/jpg`);
   res.header(`Content-Length`, result.info.length);
 
-  res.on(`error`, (e) => console.error(e));
+  res.on(`error`, (e) => logger.error(e));
   res.on(`end`, () => res.end());
   const stream = result.stream;
-  stream.on(`error`, (e) => console.error(e));
+  stream.on(`error`, (e) => logger.error(e));
   stream.on(`end`, () => res.end());
   stream.pipe(res);
 }));
@@ -107,7 +108,7 @@ const NOT_FOUND_HANDLER = (req, res) => {
 };
 
 const ERROR_HANDLER = (err, req, res, _next) => {
-  console.error(err);
+  logger.error(err);
   if (err instanceof ValidationError) {
     res.status(err.code).json(err.errors);
     return;

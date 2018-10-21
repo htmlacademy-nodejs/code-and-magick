@@ -4,6 +4,8 @@ const express = require(`express`);
 const wizardsStore = require(`./wizards/store`);
 const imagesStore = require(`./images/store`);
 const wizardsRouter = require(`./wizards/route`)(wizardsStore, imagesStore);
+const logger = require(`./logger`);
+
 const app = express();
 
 const {
@@ -19,7 +21,7 @@ const runServer = ({host, port}) => {
   port = parseInt(port, 10);
 
   app.listen(port, host, () => {
-    console.log(`Сервер запущен: http://${host}:${port}`);
+    logger.info(`Сервер запущен: http://${host}:${port}`);
   });
 };
 
