@@ -2,8 +2,7 @@
 
 const express = require(`express`);
 
-// eslint-disable-next-line new-cap
-const wizardsRouter = express.Router();
+const wizardsRouter = new express.Router();
 const IllegalArgumentError = require(`../error/illegal-argument-error`);
 const NotFoundError = require(`../error/not-found-error`);
 const multer = require(`multer`);
