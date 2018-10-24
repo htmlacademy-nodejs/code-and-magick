@@ -10,8 +10,7 @@ module.exports = (wizardsRouter) => {
     res.status(404).send(`Page was not found`);
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const ERROR_HANDLER = (err, req, res, next) => {
+  const ERROR_HANDLER = (err, req, res, _next) => {
     logger.error(err);
 
     if (err instanceof ValidationError) {
