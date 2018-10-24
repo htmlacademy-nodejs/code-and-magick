@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+require(`dotenv`).config();
+
 const commands = [
   require(`./src/help`),
   require(`./src/server`),
